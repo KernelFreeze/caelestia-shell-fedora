@@ -11,6 +11,12 @@ ExclusiveArch:  x86_64
 BuildRequires:  cmake
 BuildRequires:  ninja-build
 BuildRequires:  gcc-c++
+BuildRequires:  qt6-qtbase-devel
+BuildRequires:  qt6-qtdeclarative-devel
+BuildRequires:  libqalculate-devel
+BuildRequires:  aubio-devel
+BuildRequires:  pipewire-devel
+BuildRequires:  libcava-devel
 
 Requires:       caelestia-cli
 Requires:       quickshell-git
@@ -42,16 +48,16 @@ The desktop shell for the Caelestia dotfiles.
 %autosetup -n release
 
 %build
-%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DVERSION=%{version} -DDISTRIBUTOR="Fedora COPR (package: %{name})"
+%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DVERSION=%{version} -DGIT_REVISION=v%{version} -DDISTRIBUTOR="Fedora COPR (package: %{name})"
 %cmake_build
 
 %install
 %cmake_install
-install -Dm644 LICENSE %{buildroot}%{_datadir}/licenses/%{name}/LICENSE
 
 %files
 %license LICENSE
 %{_prefix}/*
+%config %{_sysconfdir}/xdg/quickshell/caelestia
 
 %changelog
 %autochangelog
