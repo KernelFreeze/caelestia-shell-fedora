@@ -2,7 +2,7 @@ Name:           caelestia-shell
 Version:        1.5.1
 Release:        1%{?dist}
 Summary:        The desktop shell for the Caelestia dotfiles
-License:        GPL-3.0-only
+License:        MIT
 URL:            https://github.com/caelestia-dots/shell
 Source0:        %{url}/releases/download/v%{version}/%{name}-v%{version}.tar.gz
 
