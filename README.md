@@ -16,7 +16,7 @@ sudo dnf install quickshell-git
 Enable the repository and install:
 
 ```sh
-sudo dnf copr enable celestelove/caelestia-shell
+sudo dnf copr enable celestelove/caelestia
 sudo dnf install caelestia-shell caelestia-cli
 ```
 
