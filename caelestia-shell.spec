@@ -48,7 +48,7 @@ The desktop shell for the Caelestia dotfiles.
 %autosetup -n release
 
 %build
-%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DCMAKE_INSTALL_LIBDIR=%{_libdir} -DVERSION=%{version} -DGIT_REVISION=v%{version} -DDISTRIBUTOR="Fedora COPR (package: %{name})"
+%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DINSTALL_LIBDIR=%{_libdir}/caelestia -DINSTALL_QMLDIR=%{_libdir}/qt6/qml -DVERSION=%{version} -DGIT_REVISION=v%{version} -DDISTRIBUTOR="Fedora COPR (package: %{name})"
 %cmake_build
 
 %install
