@@ -8,6 +8,7 @@ URL:            https://github.com/T-Dynamos/materialyoucolor-python
 Source0:        %{pypi_source materialyoucolor}
 
 BuildRequires:  python3-devel
+BuildRequires:  python3-pip
 BuildRequires:  python3-setuptools >= 61
 BuildRequires:  python3-wheel
 BuildRequires:  python3-pybind11 >= 2.11.0

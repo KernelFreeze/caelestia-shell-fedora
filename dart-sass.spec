@@ -12,6 +12,7 @@ Source0:        https://github.com/sass/dart-sass/archive/%{version}/%{name}-%{v
 Source1:        https://github.com/sass/sass/archive/embedded-protocol-%{_sass_version}/sass-embedded-protocol-%{_sass_version}.tar.gz
 Source2:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-x86_64
 Source3:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-aarch64
+Source4:        %{name}-%{version}-pub-cache.tar.gz
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -47,14 +48,19 @@ install -Dpm 0755 %{SOURCE3} %{_builddir}/bin/buf
 %endif
 export PATH="%{_builddir}/bin:$PATH"
 
+# Extract vendored pub cache
+tar -xzf %{SOURCE4} -C %{_builddir}
+export PUB_CACHE="%{_builddir}/pub-cache"
+
 # Disable analytics
 dart --disable-analytics
 
-# Download dependencies
-dart pub get
+# Resolve dependencies offline
+dart pub get --offline
 
 %build
 export PATH="%{_builddir}/bin:$PATH"
+export PUB_CACHE="%{_builddir}/pub-cache"
 
 UPDATE_SASS_PROTOCOL=false dart run grinder protobuf
 dart compile exe \
