@@ -8,8 +8,8 @@ Release:        1%{?dist}
 Summary:        Rubik font family by Google
 License:        OFL-1.1
 URL:            https://github.com/google/fonts
-Source0:        %{url}/raw/%{commit}/ofl/rubik/Rubik%%5Bwght%%5D.ttf
-Source1:        %{url}/raw/%{commit}/ofl/rubik/Rubik-Italic%%5Bwght%%5D.ttf
+Source0:        %{url}/raw/%{commit}/ofl/rubik/Rubik%%5Bwght%%5D.ttf#/Rubik.ttf
+Source1:        %{url}/raw/%{commit}/ofl/rubik/Rubik-Italic%%5Bwght%%5D.ttf#/Rubik-Italic.ttf
 
 BuildArch:      noarch
 
