@@ -10,12 +10,8 @@ License:        MIT
 URL:            https://sass-lang.com
 Source0:        https://github.com/sass/dart-sass/archive/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/sass/sass/archive/embedded-protocol-%{_sass_version}/sass-embedded-protocol-%{_sass_version}.tar.gz
-%ifarch x86_64
 Source2:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-x86_64
-%endif
-%ifarch aarch64
-Source2:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-aarch64
-%endif
+Source3:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-aarch64
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -43,7 +39,12 @@ mkdir -p build
 ln -sf %{_builddir}/sass-embedded-protocol-%{_sass_version} build/language
 
 # Set up buf
+%ifarch x86_64
 install -Dpm 0755 %{SOURCE2} %{_builddir}/bin/buf
+%endif
+%ifarch aarch64
+install -Dpm 0755 %{SOURCE3} %{_builddir}/bin/buf
+%endif
 export PATH="%{_builddir}/bin:$PATH"
 
 # Disable analytics

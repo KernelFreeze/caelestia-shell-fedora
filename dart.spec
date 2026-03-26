@@ -5,12 +5,8 @@ Summary:        An approachable, portable, and productive language for high-qual
 
 License:        BSD-3-Clause
 URL:            https://dart.dev
-%ifarch x86_64
 Source0:        https://storage.googleapis.com/dart-archive/channels/stable/release/%{version}/sdk/dartsdk-linux-x64-release.zip
-%endif
-%ifarch aarch64
-Source0:        https://storage.googleapis.com/dart-archive/channels/stable/release/%{version}/sdk/dartsdk-linux-arm64-release.zip
-%endif
+Source1:        https://storage.googleapis.com/dart-archive/channels/stable/release/%{version}/sdk/dartsdk-linux-arm64-release.zip
 
 ExclusiveArch:  x86_64 aarch64
 
@@ -25,7 +21,12 @@ a productive development experience with hot reload, an expressive and flexible
 type system, and native compilation to ARM and x64 machine code.
 
 %prep
+%ifarch x86_64
 unzip -qo %{SOURCE0}
+%endif
+%ifarch aarch64
+unzip -qo %{SOURCE1}
+%endif
 
 %build
 
