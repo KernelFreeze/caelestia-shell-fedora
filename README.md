@@ -4,11 +4,16 @@ Fedora RPM packaging for the [Caelestia desktop shell](https://github.com/caeles
 
 ## Prerequisites
 
-caelestia-shell requires `quickshell-git`, which is available from a separate COPR:
+caelestia-shell requires `quickshell-git` and `libcava`, each available from separate COPRs:
 
 ```sh
 sudo dnf copr enable errornointernet/quickshell
 sudo dnf install quickshell-git
+```
+
+```sh
+sudo dnf copr enable celestelove/libcava
+sudo dnf install libcava-devel
 ```
 
 ## Installing from COPR
