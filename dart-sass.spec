@@ -1,4 +1,5 @@
 %global _sass_version 3.2.0
+%global _buf_version 1.66.1
 
 Name:           dart-sass
 Version:        1.98.0
@@ -9,9 +10,19 @@ License:        MIT
 URL:            https://sass-lang.com
 Source0:        https://github.com/sass/dart-sass/archive/%{version}/%{name}-%{version}.tar.gz
 Source1:        https://github.com/sass/sass/archive/embedded-protocol-%{_sass_version}/sass-embedded-protocol-%{_sass_version}.tar.gz
+%ifarch x86_64
+Source2:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-x86_64
+%endif
+%ifarch aarch64
+Source2:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-aarch64
+%endif
+
+ExclusiveArch:  x86_64 aarch64
+
+# Dart-compiled binary has no debug sources
+%global debug_package %{nil}
 
 BuildRequires:  dart
-BuildRequires:  buf
 BuildRequires:  git
 
 Provides:       sass
@@ -26,11 +37,14 @@ build system.
 %prep
 %autosetup -n %{name}-%{version}
 
+# Extract embedded protocol source
+tar -xzf %{SOURCE1} -C %{_builddir}
 mkdir -p build
 ln -sf %{_builddir}/sass-embedded-protocol-%{_sass_version} build/language
 
-# Extract embedded protocol source
-tar -xzf %{SOURCE1} -C %{_builddir}
+# Set up buf
+install -Dpm 0755 %{SOURCE2} %{_builddir}/bin/buf
+export PATH="%{_builddir}/bin:$PATH"
 
 # Disable analytics
 dart --disable-analytics
@@ -39,6 +53,8 @@ dart --disable-analytics
 dart pub get
 
 %build
+export PATH="%{_builddir}/bin:$PATH"
+
 UPDATE_SASS_PROTOCOL=false dart run grinder protobuf
 dart compile exe \
   -Dversion=%{version} \
