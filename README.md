@@ -2,6 +2,15 @@
 
 Fedora RPM packaging for the [Caelestia desktop shell](https://github.com/caelestia-dots/shell).
 
+## Prerequisites
+
+caelestia-shell requires `quickshell-git`, which is available from a separate COPR:
+
+```sh
+sudo dnf copr enable errornointernet/quickshell
+sudo dnf install quickshell-git
+```
+
 ## Installing from COPR
 
 Enable the repository and install:
