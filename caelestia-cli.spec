@@ -3,7 +3,7 @@ Version:        1.0.6
 Release:        1%{?dist}
 Summary:        The main cli for the Caelestia dotfiles
 
-License:        MIT
+License:        GPL-3.0-only
 URL:            https://github.com/caelestia-dots/cli
 Source0:        %{url}/releases/download/v%{version}/caelestia-%{version}.tar.gz
 
@@ -25,7 +25,7 @@ Requires:       dart-sass
 Requires:       app2unit
 Requires:       wl-clipboard
 Requires:       slurp
-Requires:       gpu-screen-recorder
+Requires:       gpu-screen-recorder-ui
 Requires:       dconf
 Requires:       cliphist
 Requires:       fuzzel

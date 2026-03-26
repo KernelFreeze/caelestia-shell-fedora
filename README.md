@@ -4,7 +4,7 @@ Fedora RPM packaging for the [Caelestia desktop shell](https://github.com/caeles
 
 ## Prerequisites
 
-caelestia-shell requires `quickshell-git`, `libcava`, and `app2unit`, each available from separate COPRs:
+caelestia-shell requires `quickshell-git`, `libcava`, `gpu-screen-recorder`, and `app2unit`, each available from separate COPRs:
 
 ```sh
 sudo dnf copr enable errornointernet/quickshell
@@ -19,6 +19,11 @@ sudo dnf install libcava-devel
 ```sh
 sudo dnf copr enable celestelove/app2unit
 sudo dnf install app2unit
+```
+
+```sh
+sudo dnf copr enable brycensranch/gpu-screen-recorder-git
+sudo dnf install gpu-screen-recorder-ui
 ```
 
 ## Installing from COPR
