@@ -56,7 +56,8 @@ The desktop shell for the Caelestia dotfiles.
 
 %files
 %license LICENSE
-%{_prefix}/*
+/usr/lib/caelestia
+/usr/lib/qt6/qml/Caelestia
 %config %{_sysconfdir}/xdg/quickshell/caelestia
 
 %changelog
