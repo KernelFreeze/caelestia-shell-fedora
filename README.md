@@ -1,6 +1,6 @@
-# caelestia-shell for fedora
+# caelestia for fedora
 
-Fedora RPM packaging for the [Caelestia desktop shell](https://github.com/caelestia-dots/shell).
+Fedora RPM packaging for the [Caelestia desktop shell](https://github.com/caelestia-dots/shell) and [CLI](https://github.com/caelestia-dots/cli).
 
 ## Prerequisites
 
@@ -17,10 +17,12 @@ Enable the repository and install:
 
 ```sh
 sudo dnf copr enable celestelove/caelestia-shell
-sudo dnf install caelestia-shell
+sudo dnf install caelestia-shell caelestia-cli
 ```
 
 ## Building from source
+
+### caelestia-shell
 
 Install the build dependencies:
 
@@ -30,15 +32,33 @@ sudo dnf install rpm-build cmake ninja-build gcc-c++ \
     aubio-devel pipewire-devel libcava-devel
 ```
 
-Download the source tarball into your rpmbuild sources directory, then build:
+Download the source tarball and build:
 
 ```sh
-spectool -g -R caelestia.spec
-rpmbuild -ba caelestia.spec
+spectool -g -R caelestia-shell.spec
+rpmbuild -ba caelestia-shell.spec
 ```
 
 The resulting RPM will be in `~/rpmbuild/RPMS/x86_64/`.
 
+### caelestia-cli
+
+Install the build dependencies:
+
+```sh
+sudo dnf install rpm-build python3-devel python3-build \
+    python3-installer python3-hatchling python3-hatch-vcs
+```
+
+Download the source tarball and build:
+
+```sh
+spectool -g -R caelestia-cli.spec
+rpmbuild -ba caelestia-cli.spec
+```
+
+The resulting RPM will be in `~/rpmbuild/RPMS/noarch/`.
+
 ## License
 
-This packaging spec is licensed under MIT. The upstream Caelestia shell is licensed under [GPL-3.0-only](https://github.com/caelestia-dots/shell/blob/main/LICENSE).
+These packaging specs are licensed under MIT. The upstream Caelestia projects are licensed under [GPL-3.0-only](https://github.com/caelestia-dots/shell/blob/main/LICENSE).
