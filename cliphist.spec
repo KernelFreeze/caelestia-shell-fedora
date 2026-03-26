@@ -6,12 +6,9 @@ Summary:        Wayland clipboard manager with support for multimedia
 License:        GPL-3.0-only
 URL:            https://github.com/sentriz/cliphist
 Source0:        https://github.com/sentriz/cliphist/archive/v%{version}/%{name}-%{version}.tar.gz
-Source1:        %{name}-%{version}-vendor.tar.gz
+Source1:        https://github.com/KernelFreeze/caelestia-shell-fedora/releases/download/%{name}-%{version}/%{name}-%{version}-vendor.tar.gz
 
 BuildRequires:  golang
-BuildRequires:  golang-etcd-bbolt-devel
-BuildRequires:  golang-github-rivo-uniseg-devel
-BuildRequires:  golang-x-image-devel
 BuildRequires:  pkgconfig(wayland-client)
 BuildRequires:  pkgconfig(wayland-protocols)
 
@@ -24,13 +21,10 @@ Wayland clipboard manager with support for multimedia.}
 %autosetup -p1 -n %{name}-%{version}
 
 %build
-# Extract vendor tarball (contains only flagconf since it's not in Fedora yet)
+# Extract vendor tarball
 tar -xzf %{SOURCE1}
 
-# Build using system GOPATH
-mkdir -p _build/bin
-export GOPATH=$(pwd)/_build:%{gopath}
-go build -o _build/bin/%{name} .
+go build -mod=vendor -o _build/bin/%{name} .
 
 %install
 install -dm 0755 %{buildroot}%{_bindir}

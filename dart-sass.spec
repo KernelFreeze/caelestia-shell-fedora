@@ -12,7 +12,7 @@ Source0:        https://github.com/sass/dart-sass/archive/%{version}/%{name}-%{v
 Source1:        https://github.com/sass/sass/archive/embedded-protocol-%{_sass_version}/sass-embedded-protocol-%{_sass_version}.tar.gz
 Source2:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-x86_64
 Source3:        https://github.com/bufbuild/buf/releases/download/v%{_buf_version}/buf-Linux-aarch64
-Source4:        %{name}-%{version}-pub-cache.tar.gz
+Source4:        https://github.com/KernelFreeze/caelestia-shell-fedora/releases/download/%{name}-%{version}/%{name}-%{version}-pub-cache.tar.gz
 
 ExclusiveArch:  x86_64 aarch64
 
