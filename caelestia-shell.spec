@@ -32,7 +32,7 @@ Requires:       pipewire-libs
 Requires:       glibc
 Requires:       libstdc++
 Requires:       material-symbols-fonts
-Requires:       power-profiles-daemon
+Requires:       tuned-ppd
 Requires:       rubik-fonts
 Requires:       cascadia-code-nerd-fonts
 Requires:       swappy
