@@ -74,6 +74,28 @@ rpmbuild -ba caelestia-cli.spec
 
 The resulting RPM will be in `~/rpmbuild/RPMS/noarch/`.
 
+## Updating specs
+
+Use the updater script to check the packaged upstream projects:
+
+```sh
+python scripts/update_specs.py --dry-run
+```
+
+The dry run prints available updates and leaves the worktree unchanged. To apply the updates locally, run:
+
+```sh
+python scripts/update_specs.py
+```
+
+Review the result with `git diff` before building or committing. The script skips updates when a required source URL is missing, such as a vendored tarball that has not been published yet.
+
+To let the script create the update branch, commit, push, and open or refresh the pull request, start from a clean worktree and provide a token with `contents:write` and `pull-requests:write`:
+
+```sh
+SPEC_UPDATE_TOKEN=github_pat_... python scripts/update_specs.py --create-pr
+```
+
 ## License
 
 These packaging specs are licensed under MIT. The upstream Caelestia projects are licensed under [GPL-3.0-only](https://github.com/caelestia-dots/shell/blob/main/LICENSE).
