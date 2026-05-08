@@ -13,6 +13,7 @@ BuildRequires:  ninja-build
 BuildRequires:  gcc-c++
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtdeclarative-devel
+BuildRequires:  qt6-qtshadertools-devel
 BuildRequires:  libqalculate-devel
 BuildRequires:  aubio-devel
 BuildRequires:  pipewire-devel

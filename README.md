@@ -43,8 +43,8 @@ Install the build dependencies:
 
 ```sh
 sudo dnf install rpm-build cmake ninja-build gcc-c++ \
-    qt6-qtbase-devel qt6-qtdeclarative-devel libqalculate-devel \
-    aubio-devel pipewire-devel libcava-devel
+    qt6-qtbase-devel qt6-qtdeclarative-devel qt6-qtshadertools-devel \
+    libqalculate-devel aubio-devel pipewire-devel libcava-devel
 ```
 
 Download the source tarball and build:
