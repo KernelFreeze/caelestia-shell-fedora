@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.SPEC_UPDATE_TOKEN || github.token }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,5 +27,6 @@ jobs:
 
       - name: Check specs and open PR
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPEC_UPDATE_TOKEN: ${{ secrets.SPEC_UPDATE_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/update_specs.py --create-pr

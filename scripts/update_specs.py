@@ -21,6 +21,12 @@ from typing import Any, Callable
 ROOT = Path(__file__).resolve().parents[1]
 USER_AGENT = "caelestia-fedora-spec-updater"
 DEFAULT_BRANCH = "automation/update-specs"
+PR_PERMISSION_ERROR = (
+    "GitHub refused to create the PR with the provided token. Enable "
+    "Settings > Actions > General > 'Allow GitHub Actions to create and "
+    "approve pull requests', or add a SPEC_UPDATE_TOKEN repository secret "
+    "using a fine-grained PAT with contents:write and pull-requests:write."
+)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -546,6 +552,14 @@ def git_output(command: list[str]) -> str:
     return run(command, capture=True).stdout.strip()
 
 
+def automation_token() -> str | None:
+    return (
+        os.environ.get("SPEC_UPDATE_TOKEN")
+        or os.environ.get("GH_TOKEN")
+        or os.environ.get("GITHUB_TOKEN")
+    )
+
+
 def ensure_clean_worktree() -> None:
     status = git_output(["git", "status", "--porcelain"])
     if status:
@@ -661,8 +675,21 @@ def github_request(method: str, path: str, token: str, payload: dict[str, Any]) 
             "X-GitHub-Api-Version": "2022-11-28",
         },
     )
-    with urllib.request.urlopen(request, timeout=45) as response:
-        return json.loads(response.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(request, timeout=45) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        if (
+            exc.code == 403
+            and method == "POST"
+            and path.endswith("/pulls")
+            and "not permitted to create" in detail
+        ):
+            raise RuntimeError(PR_PERMISSION_ERROR) from None
+        raise RuntimeError(
+            f"GitHub API {method} {path} failed with HTTP {exc.code}: {detail}"
+        ) from None
 
 
 def pr_body(changes: list[Change], skipped: list[SkippedUpdate]) -> str:
@@ -732,11 +759,13 @@ def main() -> int:
     if args.create_pr and args.dry_run:
         raise SystemExit("--create-pr and --dry-run cannot be used together")
 
-    token = os.environ.get("GITHUB_TOKEN")
+    token = automation_token()
     if args.create_pr:
         ensure_clean_worktree()
         if not token:
-            raise SystemExit("GITHUB_TOKEN is required with --create-pr")
+            raise SystemExit(
+                "SPEC_UPDATE_TOKEN, GH_TOKEN, or GITHUB_TOKEN is required with --create-pr"
+            )
 
     changes, skipped = update_specs(
         token=token,
@@ -762,6 +791,9 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
+    except RuntimeError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(1)
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
         print(f"HTTP error {exc.code}: {detail}", file=sys.stderr)
