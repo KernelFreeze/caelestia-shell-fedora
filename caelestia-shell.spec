@@ -1,5 +1,5 @@
 Name:           caelestia-shell
-Version:        1.6.2
+Version:        2.2.0
 Release:        1%{?dist}
 Summary:        The desktop shell for the Caelestia dotfiles
 License:        GPL-3.0-only
