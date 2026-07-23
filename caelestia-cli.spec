@@ -1,5 +1,5 @@
 Name:           caelestia-cli
-Version:        1.0.8
+Version:        1.1.2
 Release:        1%{?dist}
 Summary:        The main cli for the Caelestia dotfiles
 
