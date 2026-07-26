@@ -40,7 +40,7 @@ class FieldCheck:
 @dataclasses.dataclass(frozen=True)
 class SnapshotCheck:
     repo: str
-    path: str
+    path: str = ""
     commit_macro: str = "commit"
     snapdate_macro: str = "snapdate"
     reset_release: bool = True
@@ -192,6 +192,24 @@ TARGETS: tuple[SpecTarget, ...] = (
         ),
     ),
     SpecTarget(
+        "caelestia-shell-git.spec",
+        fields=(
+            FieldCheck(
+                "base_version",
+                latest_github_release("caelestia-dots/shell"),
+                kind="macro",
+                reset_release=True,
+            ),
+        ),
+        snapshot=SnapshotCheck(repo="caelestia-dots/shell"),
+        derived=(
+            DerivedCheck(
+                "m3shapes_commit",
+                m3shapes_rev("caelestia-dots/shell", "commit", ref_kind="macro"),
+            ),
+        ),
+    ),
+    SpecTarget(
         "caelestia-cli.spec",
         fields=(
             FieldCheck(
@@ -200,6 +218,18 @@ TARGETS: tuple[SpecTarget, ...] = (
                 reset_release=True,
             ),
         ),
+    ),
+    SpecTarget(
+        "caelestia-cli-git.spec",
+        fields=(
+            FieldCheck(
+                "base_version",
+                latest_github_release("caelestia-dots/cli"),
+                kind="macro",
+                reset_release=True,
+            ),
+        ),
+        snapshot=SnapshotCheck(repo="caelestia-dots/cli"),
     ),
     SpecTarget(
         "cliphist.spec",
@@ -361,7 +391,10 @@ def latest_commit_for_path(
     path: str,
     token: str | None,
 ) -> tuple[str, str]:
-    query = urllib.parse.urlencode({"path": path, "per_page": "1"})
+    params = {"per_page": "1"}
+    if path:
+        params["path"] = path
+    query = urllib.parse.urlencode(params)
     commits = github_api(f"/repos/{repo}/commits?{query}", token=token)
     if not commits:
         raise RuntimeError(f"no commits found for {repo}:{path}")

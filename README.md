@@ -35,6 +35,12 @@ sudo dnf copr enable celestelove/caelestia
 sudo dnf install caelestia-shell caelestia-cli
 ```
 
+To follow upstream git snapshots instead of releases, install the git packages:
+
+```sh
+sudo dnf install caelestia-shell-git caelestia-cli-git
+```
+
 ## Building from source
 
 ### caelestia-shell
@@ -54,6 +60,8 @@ spectool -g -R caelestia-shell.spec
 rpmbuild -ba caelestia-shell.spec
 ```
 
+To build the git snapshot package, use `caelestia-shell-git.spec` instead.
+
 The resulting RPM will be in `~/rpmbuild/RPMS/x86_64/`.
 
 ### caelestia-cli
@@ -71,6 +79,8 @@ Download the source tarball and build:
 spectool -g -R caelestia-cli.spec
 rpmbuild -ba caelestia-cli.spec
 ```
+
+To build the git snapshot package, use `caelestia-cli-git.spec` instead.
 
 The resulting RPM will be in `~/rpmbuild/RPMS/noarch/`.
 
