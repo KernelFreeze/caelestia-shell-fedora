@@ -1,3 +1,8 @@
+# Must match M3SHAPES_REV in the upstream CMakeLists.txt. The build fetches it
+# with FetchContent, which cannot reach the network in the COPR builders, so it
+# is vendored as a source instead.
+%global m3shapes_commit bdc327b29f95394a732baf3c9b19658ba23755b6
+
 Name:           caelestia-shell
 Version:        2.2.0
 Release:        1%{?dist}
@@ -5,6 +10,7 @@ Summary:        The desktop shell for the Caelestia dotfiles
 License:        GPL-3.0-only
 URL:            https://github.com/caelestia-dots/shell
 Source0:        %{url}/releases/download/v%{version}/%{name}-v%{version}.tar.gz
+Source1:        https://github.com/soramanew/m3shapes/archive/%{m3shapes_commit}/m3shapes-%{m3shapes_commit}.tar.gz
 
 ExclusiveArch:  x86_64
 
@@ -18,6 +24,7 @@ BuildRequires:  libqalculate-devel
 BuildRequires:  aubio-devel
 BuildRequires:  pipewire-devel
 BuildRequires:  libcava-devel
+BuildRequires:  lm_sensors-devel
 
 Requires:       caelestia-cli
 Requires:       quickshell-git
@@ -46,10 +53,10 @@ Requires:       qt6-qtdeclarative
 The desktop shell for the Caelestia dotfiles.
 
 %prep
-%autosetup -n release
+%autosetup -n release -a 1
 
 %build
-%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DINSTALL_LIBDIR=%{_libdir}/caelestia -DINSTALL_QMLDIR=%{_libdir}/qt6/qml -DVERSION=%{version} -DGIT_REVISION=v%{version} -DDISTRIBUTOR="Fedora COPR (package: %{name})"
+%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DINSTALL_LIBDIR=%{_libdir}/caelestia -DINSTALL_QMLDIR=%{_libdir}/qt6/qml -DVERSION=%{version} -DGIT_REVISION=v%{version} -DDISTRIBUTOR="Fedora COPR (package: %{name})" -DFETCHCONTENT_SOURCE_DIR_M3SHAPES_EXTERNAL=$PWD/m3shapes-%{m3shapes_commit}
 %cmake_build
 
 %install
@@ -59,6 +66,7 @@ The desktop shell for the Caelestia dotfiles.
 %license LICENSE
 %{_libdir}/caelestia
 %{_libdir}/qt6/qml/Caelestia
+%{_libdir}/qt6/qml/M3Shapes
 %config %{_sysconfdir}/xdg/quickshell/caelestia
 
 %changelog
