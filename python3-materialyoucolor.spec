@@ -5,7 +5,8 @@ Summary:        Material You color generation algorithms in pure Python
 
 License:        MIT
 URL:            https://github.com/T-Dynamos/materialyoucolor-python
-Source0:        %{pypi_source materialyoucolor}
+# Upstream publishes wheels only, no sdist, so build from the git tag instead.
+Source0:        %{url}/archive/v%{version}/materialyoucolor-%{version}.tar.gz
 
 BuildRequires:  python3-devel
 BuildRequires:  python3-pip
@@ -21,7 +22,7 @@ Requires:       python3-pillow
 Material You color generation algorithms in pure Python.
 
 %prep
-%autosetup -n materialyoucolor-%{version}
+%autosetup -n materialyoucolor-python-%{version}
 
 %build
 %pyproject_wheel
