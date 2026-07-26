@@ -47,10 +47,24 @@ class SnapshotCheck:
 
 
 @dataclasses.dataclass(frozen=True)
+class DerivedCheck:
+    """A field whose value is read out of the upstream tree the spec builds from.
+
+    Unlike FieldCheck, the getter also receives the spec text, so it runs after
+    the version and snapshot updates and can resolve the ref they just wrote.
+    """
+
+    field: str
+    getter: Callable[[str | None, str], str]
+    kind: str = "macro"
+
+
+@dataclasses.dataclass(frozen=True)
 class SpecTarget:
     spec: str
     fields: tuple[FieldCheck, ...] = ()
     snapshot: SnapshotCheck | None = None
+    derived: tuple[DerivedCheck, ...] = ()
     validate_sources: bool = True
 
 
@@ -70,6 +84,12 @@ class SkippedUpdate:
 
 def github_api(path: str, token: str | None = None) -> Any:
     return fetch_json(f"https://api.github.com{path}", token=token)
+
+
+def fetch_text(url: str) -> str:
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(request, timeout=45) as response:
+        return response.read().decode("utf-8")
 
 
 def fetch_json(url: str, token: str | None = None) -> Any:
@@ -121,6 +141,32 @@ def latest_pypi_version(project: str) -> Callable[[str | None], str]:
     return getter
 
 
+def m3shapes_rev(
+    repo: str,
+    ref_field: str,
+    ref_kind: str = "header",
+    ref_prefix: str = "",
+) -> Callable[[str | None, str], str]:
+    """Read M3SHAPES_REV out of the upstream CMakeLists the spec builds from.
+
+    The shell vendors that revision as a source because the FetchContent call
+    upstream uses cannot reach the network in the COPR builders, so the pin has
+    to follow whatever upstream bumped it to.
+    """
+
+    def getter(_token: str | None, text: str) -> str:
+        ref = ref_prefix + read_field(text, ref_field, ref_kind)
+        cmake = fetch_text(
+            f"https://raw.githubusercontent.com/{repo}/{ref}/CMakeLists.txt"
+        )
+        match = re.search(r"^\s*set\(M3SHAPES_REV\s+(\S+?)\)", cmake, flags=re.MULTILINE)
+        if not match:
+            raise RuntimeError(f"no M3SHAPES_REV in {repo}@{ref} CMakeLists.txt")
+        return match.group(1)
+
+    return getter
+
+
 def latest_dart_stable(_token: str | None) -> str:
     data = fetch_json(
         "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/VERSION"
@@ -136,6 +182,12 @@ TARGETS: tuple[SpecTarget, ...] = (
                 "Version",
                 latest_github_release("caelestia-dots/shell"),
                 reset_release=True,
+            ),
+        ),
+        derived=(
+            DerivedCheck(
+                "m3shapes_commit",
+                m3shapes_rev("caelestia-dots/shell", "Version", ref_prefix="v"),
             ),
         ),
     ),
@@ -415,6 +467,15 @@ def apply_target(
                         )
                     )
                 release_needs_reset = release_needs_reset or target.snapshot.reset_release
+
+        for derived in target.derived:
+            current = read_field(updated, derived.field, derived.kind)
+            latest = derived.getter(token, updated)
+            if current != latest:
+                updated = replace_field(updated, derived.field, derived.kind, latest)
+                changes.append(
+                    Change(target.spec, derived.field, current[:12], latest[:12])
+                )
 
         if not changes:
             return [], None
