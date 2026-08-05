@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check RPM specs for upstream updates and optionally open a PR."""
+"""Check RPM specs for upstream updates and optionally publish the changes."""
 
 from __future__ import annotations
 
@@ -606,11 +606,17 @@ def update_specs(
     token: str | None,
     dry_run: bool,
     validate_sources: bool,
+    package_kind: str | None = None,
 ) -> tuple[list[Change], list[SkippedUpdate]]:
     changes: list[Change] = []
     skipped: list[SkippedUpdate] = []
 
     for target in TARGETS:
+        is_git_package = target.spec.endswith("-git.spec")
+        if package_kind == "git" and not is_git_package:
+            continue
+        if package_kind == "non-git" and is_git_package:
+            continue
         target_changes, target_skipped = apply_target(
             target,
             token=token,
@@ -657,7 +663,7 @@ def automation_token() -> str | None:
 def ensure_clean_worktree() -> None:
     status = git_output(["git", "status", "--porcelain"])
     if status:
-        raise RuntimeError("worktree must be clean before creating a PR")
+        raise RuntimeError("worktree must be clean before publishing updates")
 
 
 def configure_git_author() -> None:
@@ -699,6 +705,13 @@ def create_or_update_pr(
     body = pr_body(changes, skipped)
     url = ensure_pull_request(repository, branch, base, title, body, token)
     return url
+
+
+def push_to_main(changes: list[Change], branch: str = "main") -> None:
+    configure_git_author()
+    run(["git", "add", *sorted({change.spec for change in changes})])
+    run(["git", "commit", "-m", "chore: update git package specs"])
+    run(["git", "push", "origin", f"HEAD:refs/heads/{branch}"])
 
 
 def github_repository() -> str:
@@ -820,10 +833,27 @@ def print_summary(changes: list[Change], skipped: list[SkippedUpdate]) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
+    publish_group = parser.add_mutually_exclusive_group()
+    publish_group.add_argument(
         "--create-pr",
         action="store_true",
         help="commit updates, push an automation branch, and open or update a PR",
+    )
+    publish_group.add_argument(
+        "--push-main",
+        action="store_true",
+        help="commit git package updates and push them directly to main",
+    )
+    package_group = parser.add_mutually_exclusive_group()
+    package_group.add_argument(
+        "--git-only",
+        action="store_true",
+        help="only check specs for packages built from upstream git snapshots",
+    )
+    package_group.add_argument(
+        "--non-git-only",
+        action="store_true",
+        help="skip specs for packages built from upstream git snapshots",
     )
     parser.add_argument(
         "--dry-run",
@@ -850,21 +880,31 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    if args.create_pr and args.dry_run:
-        raise SystemExit("--create-pr and --dry-run cannot be used together")
+    if (args.create_pr or args.push_main) and args.dry_run:
+        raise SystemExit("--create-pr/--push-main and --dry-run cannot be used together")
+    if args.push_main and args.non_git_only:
+        raise SystemExit("--push-main cannot be used with --non-git-only")
 
     token = automation_token()
-    if args.create_pr:
+    if args.create_pr or args.push_main:
         ensure_clean_worktree()
         if not token:
             raise SystemExit(
-                "SPEC_UPDATE_TOKEN, GH_TOKEN, or GITHUB_TOKEN is required with --create-pr"
+                "SPEC_UPDATE_TOKEN, GH_TOKEN, or GITHUB_TOKEN is required with "
+                "--create-pr or --push-main"
             )
+
+    package_kind = None
+    if args.git_only or args.push_main:
+        package_kind = "git"
+    elif args.non_git_only:
+        package_kind = "non-git"
 
     changes, skipped = update_specs(
         token=token,
         dry_run=args.dry_run,
         validate_sources=not args.no_validate_sources,
+        package_kind=package_kind,
     )
     print_summary(changes, skipped)
 
@@ -878,6 +918,10 @@ def main() -> int:
         )
         print("")
         print(f"Pull request: {pr_url}")
+    elif args.push_main and changes:
+        push_to_main(changes)
+        print("")
+        print("Pushed git package updates to main.")
 
     return 0
 

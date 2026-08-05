@@ -100,10 +100,16 @@ python scripts/update_specs.py
 
 Review the result with `git diff` before building or committing. The script skips updates when a required source URL is missing, such as a vendored tarball that has not been published yet.
 
-To let the script create the update branch, commit, push, and open or refresh the pull request, start from a clean worktree and provide a token with `contents:write` and `pull-requests:write`:
+The scheduled workflow updates the `*-git.spec` files directly on `main`. To do the same locally, start from a clean worktree and provide a token with `contents:write`:
 
 ```sh
-SPEC_UPDATE_TOKEN=github_pat_... python scripts/update_specs.py --create-pr
+SPEC_UPDATE_TOKEN=github_pat_... python scripts/update_specs.py --push-main
+```
+
+For release and non-git snapshot specs, the script can create or refresh an update pull request. Provide a token with `contents:write` and `pull-requests:write`:
+
+```sh
+SPEC_UPDATE_TOKEN=github_pat_... python scripts/update_specs.py --create-pr --non-git-only
 ```
 
 ## License
