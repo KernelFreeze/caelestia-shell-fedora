@@ -1,5 +1,5 @@
 Name:           python3-materialyoucolor
-Version:        3.0.3
+Version:        3.0.4
 Release:        1%{?dist}
 Summary:        Material You color generation algorithms in pure Python
 
