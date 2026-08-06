@@ -4,7 +4,7 @@
 %global m3shapes_commit bdc327b29f95394a732baf3c9b19658ba23755b6
 
 Name:           caelestia-shell
-Version:        2.2.0
+Version:        2.3.0
 Release:        1%{?dist}
 Summary:        The desktop shell for the Caelestia dotfiles
 License:        GPL-3.0-only
