@@ -1,7 +1,7 @@
 %global base_version 2.3.0
-%global commit 94d5eb9e6fe9c6b1f69e663d9ed410a441e2d67f
+%global commit 817a220e8e87c4df9f3681033a0d8a8054cdaa30
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global snapdate 20260806
+%global snapdate 20260809
 # Must match M3SHAPES_REV in the upstream CMakeLists.txt. The build fetches it
 # with FetchContent, which cannot reach the network in the COPR builders, so it
 # is vendored as a source instead.
