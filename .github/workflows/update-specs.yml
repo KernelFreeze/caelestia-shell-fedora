@@ -9,6 +9,66 @@ permissions:
   contents: write
 
 jobs:
+  prepare-dart-sass-source:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: main
+          token: ${{ secrets.SPEC_UPDATE_TOKEN || github.token }}
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build missing Dart Sass pub cache
+        id: sass-source
+        env:
+          GH_TOKEN: ${{ secrets.SPEC_UPDATE_TOKEN || github.token }}
+        run: |
+          version="$(gh api repos/sass/dart-sass/releases/latest --jq .tag_name)"
+          tag="dart-sass-${version}"
+          asset="dart-sass-${version}-pub-cache.tar.gz"
+
+          {
+            echo "tag=${tag}"
+            echo "asset=${asset}"
+            echo "asset_exists=false"
+          } >> "$GITHUB_OUTPUT"
+
+          if gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq "$asset"; then
+            echo "asset_exists=true" >> "$GITHUB_OUTPUT"
+            echo "${asset} already exists"
+            exit 0
+          fi
+
+          python scripts/vendor_dart_sass.py \
+            --version "$version" \
+            --output "$RUNNER_TEMP/$asset"
+
+      - name: Create release and upload Dart Sass pub cache
+        if: steps.sass-source.outputs.asset_exists != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SPEC_UPDATE_TOKEN || github.token }}
+          RELEASE_TAG: ${{ steps.sass-source.outputs.tag }}
+          ASSET_NAME: ${{ steps.sass-source.outputs.asset }}
+        run: |
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" \
+              --title "Dart Sass ${RELEASE_TAG#dart-sass-} vendored dependencies" \
+              --notes "Vendored Dart pub cache for building dart-sass ${RELEASE_TAG#dart-sass-} in offline environments (e.g. COPR)."
+          fi
+          gh release upload "$RELEASE_TAG" "$RUNNER_TEMP/$ASSET_NAME"
+
   update-git-specs:
     runs-on: ubuntu-latest
 
@@ -32,7 +92,7 @@ jobs:
         run: python scripts/update_specs.py --push-main
 
   update-release-specs:
-    needs: update-git-specs
+    needs: [prepare-dart-sass-source, update-git-specs]
     runs-on: ubuntu-latest
     permissions:
       contents: write

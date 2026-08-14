@@ -112,6 +112,11 @@ For release and non-git snapshot specs, the script can create or refresh an upda
 SPEC_UPDATE_TOKEN=github_pat_... python scripts/update_specs.py --create-pr --non-git-only
 ```
 
+Before that PR job runs, the scheduled workflow creates the missing Dart Sass
+pub-cache release asset with `scripts/vendor_dart_sass.py`. This keeps the
+offline `Source4` in `dart-sass.spec` available when the updater validates the
+new version.
+
 ## License
 
 These packaging specs are licensed under MIT. The upstream Caelestia projects are licensed under [GPL-3.0-only](https://github.com/caelestia-dots/shell/blob/main/LICENSE).
