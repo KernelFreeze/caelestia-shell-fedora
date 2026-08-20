@@ -2,7 +2,7 @@
 %global _buf_version 1.72.0
 
 Name:           dart-sass
-Version:        1.102.0
+Version:        1.103.0
 Release:        %autorelease
 Summary:        Sass makes CSS fun again
 
