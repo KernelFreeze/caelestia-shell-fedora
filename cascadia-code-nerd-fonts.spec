@@ -1,5 +1,5 @@
 Name:           cascadia-code-nerd-fonts
-Version:        3.5.0
+Version:        3.5.1
 Release:        1%{?dist}
 Summary:        Cascadia Code patched with Nerd Fonts icons
 License:        OFL-1.1
