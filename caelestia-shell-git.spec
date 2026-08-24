@@ -1,5 +1,5 @@
 %global base_version 2.3.0
-%global commit 4c69204d8d7b2dac6950b4de9055465229359f55
+%global commit 1d0e5a588c61f1d905eba5fe8446ec222d37f50c
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global snapdate 20260823
 # Must match M3SHAPES_REV in the upstream CMakeLists.txt. The build fetches it
