@@ -1,5 +1,5 @@
 Name:           dart
-Version:        3.13.2
+Version:        3.13.3
 Release:        %autorelease
 Summary:        An approachable, portable, and productive language for high-quality apps on any platform
 
