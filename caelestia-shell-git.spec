@@ -1,11 +1,11 @@
-%global base_version 2.3.0
-%global commit 1b7052d108677a7ca0d3d3365511bfe8281a6868
+%global base_version 2.4.0
+%global commit 6d3e6a96492b0e9c668464875ac34150113ede5f
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global snapdate 20260828
+%global snapdate 20260906
 # Must match M3SHAPES_REV in the upstream CMakeLists.txt. The build fetches it
 # with FetchContent, which cannot reach the network in the COPR builders, so it
 # is vendored as a source instead.
-%global m3shapes_commit bdc327b29f95394a732baf3c9b19658ba23755b6
+%global m3shapes_commit 32ad9ce328bb77ed349b40a3be10ee9ea610b8ab
 
 Name:           caelestia-shell-git
 Version:        %{base_version}^%{snapdate}git%{shortcommit}
