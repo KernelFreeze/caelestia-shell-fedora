@@ -147,22 +147,59 @@ def m3shapes_rev(
     ref_kind: str = "header",
     ref_prefix: str = "",
 ) -> Callable[[str | None, str], str]:
-    """Read M3SHAPES_REV out of the upstream CMakeLists the spec builds from.
+    """Read the m3shapes commit out of the upstream tree the spec builds from.
 
     The shell vendors that revision as a source because the FetchContent call
-    upstream uses cannot reach the network in the COPR builders, so the pin has
+    upstream used cannot reach the network in the COPR builders, so the pin has
     to follow whatever upstream bumped it to.
+
+    Upstream originally tracked this via M3SHAPES_REV in CMakeLists.txt, but
+    moved it to flake.lock / flake.nix in later releases (v2.4.0+).
     """
 
     def getter(_token: str | None, text: str) -> str:
         ref = ref_prefix + read_field(text, ref_field, ref_kind)
-        cmake = fetch_text(
-            f"https://raw.githubusercontent.com/{repo}/{ref}/CMakeLists.txt"
-        )
-        match = re.search(r"^\s*set\(M3SHAPES_REV\s+(\S+?)\)", cmake, flags=re.MULTILINE)
-        if not match:
-            raise RuntimeError(f"no M3SHAPES_REV in {repo}@{ref} CMakeLists.txt")
-        return match.group(1)
+
+        # 1. CMakeLists.txt (used in older upstream versions, e.g. <= 2.3.0)
+        try:
+            cmake = fetch_text(
+                f"https://raw.githubusercontent.com/{repo}/{ref}/CMakeLists.txt"
+            )
+            match = re.search(r"^\s*set\(M3SHAPES_REV\s+(\S+?)\)", cmake, flags=re.MULTILINE)
+            if match:
+                return match.group(1)
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+
+        # 2. flake.lock (used in newer upstream versions, e.g. >= 2.4.0)
+        try:
+            data = fetch_json(
+                f"https://raw.githubusercontent.com/{repo}/{ref}/flake.lock",
+                token=_token,
+            )
+            rev = data.get("nodes", {}).get("m3shapes", {}).get("locked", {}).get("rev")
+            if rev:
+                return rev
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+        except (json.JSONDecodeError, AttributeError):
+            pass
+
+        # 3. flake.nix (fallback for flake-based pinning)
+        try:
+            nix = fetch_text(
+                f"https://raw.githubusercontent.com/{repo}/{ref}/flake.nix"
+            )
+            match = re.search(r"soramanew/m3shapes/([0-9a-fA-F]+)", nix)
+            if match:
+                return match.group(1)
+        except urllib.error.HTTPError as exc:
+            if exc.code != 404:
+                raise
+
+        raise RuntimeError(f"no m3shapes revision found in {repo}@{ref}")
 
     return getter
 
