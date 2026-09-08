@@ -1,10 +1,10 @@
 # Must match M3SHAPES_REV in the upstream CMakeLists.txt. The build fetches it
 # with FetchContent, which cannot reach the network in the COPR builders, so it
 # is vendored as a source instead.
-%global m3shapes_commit bdc327b29f95394a732baf3c9b19658ba23755b6
+%global m3shapes_commit 32ad9ce328bb77ed349b40a3be10ee9ea610b8ab
 
 Name:           caelestia-shell
-Version:        2.3.0
+Version:        2.4.0
 Release:        1%{?dist}
 Summary:        The desktop shell for the Caelestia dotfiles
 License:        GPL-3.0-only
