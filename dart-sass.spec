@@ -1,4 +1,4 @@
-%global _sass_version 3.2.0
+%global _sass_version 3.3.0
 %global _buf_version 1.73.0
 
 Name:           dart-sass
