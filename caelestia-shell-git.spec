@@ -2,9 +2,9 @@
 %global commit 20e625d6bf1a9d0bb7625a4bb814797d187b075d
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 %global snapdate 20260920
-# Must match M3SHAPES_REV in the upstream CMakeLists.txt. The build fetches it
-# with FetchContent, which cannot reach the network in the COPR builders, so it
-# is vendored as a source instead.
+# Must match the m3shapes pin in the upstream flake.lock. Since v2.4.0 upstream
+# no longer builds m3shapes itself (it is an external runtime dependency), so it
+# is vendored as a source and built/installed alongside the shell here.
 %global m3shapes_commit 32ad9ce328bb77ed349b40a3be10ee9ea610b8ab
 
 Name:           caelestia-shell-git
@@ -64,11 +64,21 @@ git snapshot.
 %autosetup -n shell-%{commit} -a 1
 
 %build
-%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DINSTALL_LIBDIR=%{_libdir}/caelestia -DINSTALL_QMLDIR=%{_libdir}/qt6/qml -DVERSION=%{base_version} -DGIT_REVISION=%{commit} -DDISTRIBUTOR="Fedora COPR (package: %{name})" -DFETCHCONTENT_SOURCE_DIR_M3SHAPES_EXTERNAL=$PWD/m3shapes-%{m3shapes_commit}
+%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/ -DINSTALL_LIBDIR=%{_libdir}/caelestia -DINSTALL_QMLDIR=%{_libdir}/qt6/qml -DVERSION=%{base_version} -DGIT_REVISION=%{commit} -DDISTRIBUTOR="Fedora COPR (package: %{name})"
 %cmake_build
+
+# M3Shapes QML module (no longer built by the shell's CMake since v2.4.0)
+pushd m3shapes-%{m3shapes_commit}
+%cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINSTALL_QMLDIR=%{_libdir}/qt6/qml
+%cmake_build
+popd
 
 %install
 %cmake_install
+
+pushd m3shapes-%{m3shapes_commit}
+%cmake_install
+popd
 
 %files
 %license LICENSE
