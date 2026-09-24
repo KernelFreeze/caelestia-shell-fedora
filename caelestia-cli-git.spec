@@ -1,7 +1,7 @@
 %global base_version 1.1.3
-%global commit 67fa32a29d141f3bad8219a602e50c7ca8ee9205
+%global commit 3964db0cfa5a56fec850af687fe33d4e65481fb9
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global snapdate 20260923
+%global snapdate 20260924
 %global python_snapshot_version %{base_version}.post%{snapdate}+git%{shortcommit}
 
 Name:           caelestia-cli-git
