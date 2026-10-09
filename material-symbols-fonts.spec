@@ -1,6 +1,6 @@
-%global commit 737e3324305806514d7909874fa1818ae1808232
+%global commit 49d4db35df873165d6bd6ba09b063c7dafbac2f4
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global snapdate 20261002
+%global snapdate 20261009
 
 Name:           material-symbols-fonts
 Version:        4.0.0^%{snapdate}git%{shortcommit}
