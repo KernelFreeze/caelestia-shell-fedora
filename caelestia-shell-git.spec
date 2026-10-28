@@ -1,7 +1,7 @@
 %global base_version 2.5.0
-%global commit 4b1dae84b1b3b28bf486776ba30c1c1ec74fb64d
+%global commit 48b323fa9d7ada89939ba6b3ea4e4fdf93d126a6
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global snapdate 20261025
+%global snapdate 20261028
 # Must match the m3shapes pin in the upstream flake.lock. Since v2.4.0 upstream
 # no longer builds m3shapes itself (it is an external runtime dependency), so it
 # is vendored as a source and built/installed alongside the shell here.
