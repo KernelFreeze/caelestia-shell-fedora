@@ -330,6 +330,16 @@ TARGETS: tuple[SpecTarget, ...] = (
         ),
     ),
     SpecTarget(
+        "qtengine.spec",
+        fields=(
+            FieldCheck(
+                "Version",
+                latest_github_release("kosslan/qtengine"),
+                reset_release=True,
+            ),
+        ),
+    ),
+    SpecTarget(
         "rubik-fonts.spec",
         snapshot=SnapshotCheck(
             repo="google/fonts",
