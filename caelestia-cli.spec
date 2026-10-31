@@ -31,6 +31,7 @@ Requires:       cliphist
 Requires:       fuzzel
 
 Recommends:     caelestia-shell
+Recommends:     qtengine
 
 Conflicts:      caelestia-cli-git
 

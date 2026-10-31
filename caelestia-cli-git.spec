@@ -37,6 +37,7 @@ Requires:       cliphist
 Requires:       fuzzel
 
 Recommends:     caelestia-shell-git
+Recommends:     qtengine
 
 Provides:       caelestia-cli = %{version}-%{release}
 Conflicts:      caelestia-cli < %{version}
