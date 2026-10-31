@@ -24,6 +24,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  qt6-qtbase-devel
 BuildRequires:  qt6-qtdeclarative-devel
 BuildRequires:  qt6-qtshadertools-devel
+BuildRequires:  qt6-qtmultimedia-devel
 BuildRequires:  libqalculate-devel
 BuildRequires:  aubio-devel
 BuildRequires:  pipewire-devel
@@ -52,6 +53,7 @@ Requires:       libqalculate
 Requires:       bash
 Requires:       qt6-qtbase
 Requires:       qt6-qtdeclarative
+Requires:       qt6-qtmultimedia
 
 Provides:       caelestia-shell = %{version}-%{release}
 Conflicts:      caelestia-shell < %{version}
