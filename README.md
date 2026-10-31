@@ -41,6 +41,16 @@ To follow upstream git snapshots instead of releases, install the git packages:
 sudo dnf install caelestia-shell-git caelestia-cli-git
 ```
 
+### Qt theming
+
+caelestia-cli writes its Qt colors and settings to `~/.config/qtengine/config.json`, which the [qtengine](https://github.com/kosslan/qtengine) platform theme reads. caelestia-cli recommends the `qtengine` package, so dnf installs it by default. Qt apps only use it when the session sets:
+
+```sh
+QT_QPA_PLATFORMTHEME=qtengine
+```
+
+The Caelestia dotfiles already set this variable. The generated config also names the Papirus icon theme and the Darkly widget style, which need to be installed separately for icons and widgets to match.
+
 ## Building from source
 
 ### caelestia-shell
@@ -83,6 +93,19 @@ rpmbuild -ba caelestia-cli.spec
 To build the git snapshot package, use `caelestia-cli-git.spec` instead.
 
 The resulting RPM will be in `~/rpmbuild/RPMS/noarch/`.
+
+### qtengine
+
+Install the build dependencies and build:
+
+```sh
+sudo dnf install rpm-build
+sudo dnf builddep qtengine.spec
+spectool -g -R qtengine.spec
+rpmbuild -ba qtengine.spec
+```
+
+The resulting RPM will be in `~/rpmbuild/RPMS/x86_64/`.
 
 ## Updating specs
 
