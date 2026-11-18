@@ -1,6 +1,6 @@
-%global commit 54584294ef89979740aa9687fdc3c04d11c4b539
+%global commit e09ebe46ba39be6077deb3fe9a866fce278bb9f8
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
-%global snapdate 20260325
+%global snapdate 20261118
 
 Name:           rubik-fonts
 Version:        0^%{snapdate}git%{shortcommit}
